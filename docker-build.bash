@@ -2,7 +2,7 @@
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-cp -r ${DIR}/../scripts ${DIR}/${1}/scripts
+cp -r $(pwd)/scripts ${DIR}/${1}/scripts
 
 docker build -t wavelab/ubuntu:${1} ${DIR}/${1}
 
