@@ -28,6 +28,7 @@ sudo: required
 env:
   global:
   - DOCKER_CACHE_DIR=$HOME/docker_cache
+  - DOCKER_CI_REL_DIR=.
   matrix:
     - DOCKER_DISTRO=trusty
     - DOCKER_DISTRO=xenial
@@ -41,7 +42,7 @@ before_install:
 
 # Load the cached docker container. Otherwise, delete and rebuild it.
 install:
-  - travis_wait 45 bash docker-setup-ci.bash
+  - travis_wait 45 bash ${DOCKER_CI_REL_DIR}/docker-setup-ci.bash
 
 # Execute the CI script using the docker container
 #
@@ -49,11 +50,11 @@ install:
 #   {1}: The repository name
 #   {2}: The relative path to the respository's own CI test script
 script:
-  - bash docker-run-ci.sh ros_docker_ci scripts/run-ci-tests.sh
+  - bash ${DOCKER_CI_REL_DIR}/docker-run-ci.sh ros_docker_ci scripts/run-ci-tests.sh
 
 # Cache the docker container if it was rebuilt above.
 before_cache:
-  - bash save-docker-cache-ci.bash
+  - bash ${DOCKER_CI_REL_DIR}/save-docker-cache-ci.bash
 
 cache:
   directories:
