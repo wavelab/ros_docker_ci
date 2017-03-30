@@ -1,5 +1,5 @@
 #!/bin/bash
-set -echo
+set -e
 
 build_container()
 {
