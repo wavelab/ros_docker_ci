@@ -4,7 +4,7 @@ set -e
 build_container()
 {
     echo "Building ROS-Docker container for ${DOCKER_DISTRO}..."
-    bash ros_docker_ci/docker-build.sh ${DOCKER_DISTRO}
+    bash ${DOCKER_CI_REL_DIR}/docker-build.bash ${DOCKER_DISTRO}
 }
 
 if [[ -d ${DOCKER_CACHE_DIR} ]]; then
