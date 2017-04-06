@@ -4,8 +4,11 @@ This repository encapsulates the necessary scripts and docker files to set up a
 docker container for use in Travis-CI that supports testing in a Ubuntu/ROS
 environment of either:
 
-* trust/indigo
+* trusty/indigo
 * xenial/kinetic
+
+An example illustrating its usage can be found at the
+[ros_docker_ci_demo](https://github.com/wavelab/ros_docker_ci_demo) repo.
 
 ## Authors
 
@@ -64,7 +67,7 @@ to place the submodule at `dependencies/ros_docker_ci`
 
 The project must contain a `scripts/install_deps_for_docker_ci.bash` script to
 direct the installation of repository dependencies inside the docker container.
-Other than the barebones items indicted in the
+Other than the barebones items indicated in the
 [dockerfile](https://github.com/wavelab/ros_docker_ci/blob/master/trusty/Dockerfile),
 this script is the only installation script that will be run. Ideally your
 repository XYZ will already contain an `install_all_XYZ_dependencies.bash` style
@@ -190,7 +193,7 @@ install:
   - travis_wait 45 bash ${DOCKER_CI_REL_DIR}/docker-setup-ci.bash
 ```
 
-handles the before_install and install phases of the travis build. The git
+handles the `before_install` and `install` phases of the travis build. The git
 submodule commands make sure that `ros_docker_ci` as well as any other required
 submodules are ready for the build.
 
@@ -220,4 +223,3 @@ takes 2 arguments that must be specified here. The first is the name of the user
 repo, which will be used to mount the repo to the container's root. The second
 is the user repo's CI script that is used to perform the CI tasks and is given
 as a repo-relative path.
- 
