@@ -88,11 +88,13 @@ confirm compilation without tests.
 
 ```bash
 #!/bin/bash
-
 set -e  # exit on first error
 
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 source /opt/ros/${ROS_DISTRO}/setup.bash
-source /ros_docker_ci_demo/scripts/identify_environment.bash
+# get UBUNTU_CODENAME, ROS_DISTRO, REPO_DIR, CATKIN_DIR
+source $SCRIPT_DIR/identify_environment.bash
 
 sudo apt-get update
 
@@ -105,11 +107,10 @@ The CI test script does not require a specific name or location. You will
 provide them in the `.travis.yml` file as parameters to `ros_docker_ci`'s docker
 scripts.
 
-NOTE: The docker scripts currently mount the repo to root within the container,
-so any CI test script needs to support that, such as shown in the example above
-with the path to the `identify_environment.bash` script. There is currently an
-[issue](https://github.com/wavelab/ros_docker_ci/issues/8) open to revisit and
-address this.
+NOTE: The docker scripts will be mounted to the same location in the docker
+container as they appear in the Travis-CI build. Accordingly, scripts should not
+rely on a specific absolute location and should determine paths automatically
+where required.
 
 ### The `.travis.yml` file
 
@@ -138,7 +139,7 @@ install:
   - travis_wait 45 bash ${DOCKER_CI_REL_DIR}/docker-setup-ci.bash
 
 script:
-  - bash ${DOCKER_CI_REL_DIR}/docker-run-ci.bash ros_docker_ci_demo scripts/run-ci-tests.bash
+  - bash ${DOCKER_CI_REL_DIR}/docker-run-ci.bash scripts/run-ci-tests.bash
 
 before_cache:
   - bash ${DOCKER_CI_REL_DIR}/save-docker-cache-ci.bash
@@ -215,11 +216,9 @@ The snippet
 
 ```bash
 script:
-  - bash ${DOCKER_CI_REL_DIR}/docker-run-ci.bash ros_docker_ci_demo scripts/run-ci-tests.bash
+  - bash ${DOCKER_CI_REL_DIR}/docker-run-ci.bash scripts/run-ci-tests.bash
 ```
 
 handles the `script` phase of the travis build. The `docker-run-ci.bash` script
-takes 2 arguments that must be specified here. The first is the name of the user
-repo, which will be used to mount the repo to the container's root. The second
-is the user repo's CI script that is used to perform the CI tasks and is given
-as a repo-relative path.
+takes 1 argument that must be specified here: the user repo's CI script that is
+used to perform the CI tasks and is given as a repo-relative path.
