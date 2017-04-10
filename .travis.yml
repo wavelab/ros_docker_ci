@@ -46,11 +46,10 @@ install:
 
 # Execute the CI script using the docker container
 #
-# docker-run-ci.sh takes two arguments:
-#   {1}: The repository name
-#   {2}: The relative path to the respository's own CI test script
+# docker-run-ci.sh takes one argument:
+#   {1}: The relative path to the respository's own CI test script
 script:
-  - bash ${DOCKER_CI_REL_DIR}/docker-run-ci.bash ros_docker_ci scripts/run-ci-tests.bash
+  - bash ${DOCKER_CI_REL_DIR}/docker-run-ci.bash scripts/run-ci-tests.bash
 
 # Cache the docker container if it was rebuilt above.
 before_cache:
