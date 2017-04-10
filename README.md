@@ -222,3 +222,22 @@ script:
 handles the `script` phase of the travis build. The `docker-run-ci.bash` script
 takes 1 argument that must be specified here: the user repo's CI script that is
 used to perform the CI tasks and is given as a repo-relative path.
+
+#### Caching
+
+The snippet
+
+```bash
+before_cache:
+  - bash ${DOCKER_CI_REL_DIR}/save-docker-cache-ci.bash
+
+cache:
+  directories:
+    - $HOME/docker_cache
+  timeout: 1200
+```
+
+handles Travis-CI's cache usage. If the docker container was rebuilt by the
+`docker-setup-ci.bash` script, then the updated container will be added to the
+cache directory. The cache directory set in the `cache:` segment must contain
+the directory specified by `DOCKER_CACHE_DIR`.
