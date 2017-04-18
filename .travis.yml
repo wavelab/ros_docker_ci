@@ -1,0 +1,61 @@
+# General .travis.yml file for running continuous integration on Travis-CI using
+# Docker to test other Ubuntu/ROS versions that just the versions that are
+# natively supported by Travis-CI.
+#
+# Initially based on the .travis.yml file posted by Felix Duvallet for using
+# Travis-CI with any ROS package <felixd@gmail.com>
+#
+# Almost completely redone by Alex Tomala and Michael Smart.
+#
+# NOTE: The build lifecycle on Travis.ci is something like this:
+#    before_install
+#    install
+#    before_script
+#    script
+#    after_success or after_failure
+#    after_script
+#    OPTIONAL before_deploy
+#    OPTIONAL deploy
+#    OPTIONAL after_deploy
+#
+################################################################################
+
+# Use ubuntu trusty (14.04) with sudo privileges.
+dist: trusty
+sudo: required
+
+# Set build matrix and global CI env variables
+env:
+  global:
+  - DOCKER_CACHE_DIR=$HOME/docker_cache
+  - DOCKER_CI_REL_DIR=.
+  matrix:
+    - DOCKER_DISTRO=trusty
+    - DOCKER_DISTRO=xenial
+
+################################################################################
+
+# Have to pull git outside of docker as the container doesn't have an ssh key.
+before_install:
+  - git submodule init
+  - git submodule -q update
+
+# Load the cached docker container. Otherwise, delete and rebuild it.
+install:
+  - travis_wait 45 bash ${DOCKER_CI_REL_DIR}/docker-setup-ci.bash
+
+# Execute the CI script using the docker container
+#
+# docker-run-ci.sh takes one argument:
+#   {1}: The relative path to the respository's own CI test script
+script:
+  - bash ${DOCKER_CI_REL_DIR}/docker-run-ci.bash scripts/run-ci-tests.bash
+
+# Cache the docker container if it was rebuilt above.
+before_cache:
+  - bash ${DOCKER_CI_REL_DIR}/save-docker-cache-ci.bash
+
+cache:
+  directories:
+    - $HOME/docker_cache
+  timeout: 1200
